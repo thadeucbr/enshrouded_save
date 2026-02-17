@@ -1,0 +1,52 @@
+services:
+  enshrouded:
+    image: mornedhels/enshrouded-server:latest
+    container_name: enshrouded
+    hostname: enshrouded
+    restart: unless-stopped
+    stop_grace_period: 90s
+    ports:
+      - "15636:15636/udp" # Game Port
+      - "15637:15637/udp" # Query Port
+    volumes:
+      - ./game-data:/opt/enshrouded
+    environment:
+      # --- Configurações Básicas ---
+      - SERVER_NAME=TengaWorld
+      - SERVER_SLOT_COUNT=8 # Máximo de jogadores (1-16)
+      - SERVER_IP=0.0.0.0
+
+      # --- Dificuldade e Jogabilidade (NOVO) ---
+      # Opções: Default, Relaxed, Hard, Survival, Custom
+      # "Relaxed" dá mais recursos e menos inimigos (bom para construção)
+      # "Survival" adiciona mecânicas de fome/sede mais punitivas
+      - SERVER_GAME_SETTINGS_PRESET=Survival
+
+      # --- Chat e Voz (NOVO) ---
+      - SERVER_ENABLE_TEXT_CHAT=true # Ativa o chat de texto (padrão é false)
+      - SERVER_ENABLE_VOICE_CHAT=false # Chat de voz desligado para economizar banda
+      # Se ativar voz, escolha: Proximity (proximidade) ou Global
+      - SERVER_VOICE_CHAT_MODE=Proximity
+
+      # --- Manutenção Automática (CRON) ---
+      # Atualiza o jogo a cada 30 min se houver update na Steam
+      - UPDATE_CRON=*/30 * * * *
+      # Faz backup a cada 2 horas (Formato: min hora dia mês sem)
+      - BACKUP_CRON=0 */2 * * *
+      # Limite de Backups: Guarda apenas os últimos 24 (aprox. 2 dias) para não lotar o disco
+      - BACKUP_MAX_COUNT=24
+      # Reinicia todo dia as 04:30 da manhã para limpar a RAM
+      - RESTART_CRON=30 4 * * *
+
+      # --- Permissões Linux ---
+      - PUID=1000
+      - PGID=1000
+
+      # --- NOTA SOBRE SENHA ---
+      # A variável SERVER_PASSWORD é obsoleta.
+      # A senha deve ser mantida no arquivo enshrouded_server.json que você já editou.
+
+    deploy:
+      resources:
+        limits:
+          memory: 20G # Pode aumentar para 20G ou 24G já que você tem 32GB sobrando

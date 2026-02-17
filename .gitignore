@@ -35,3 +35,5 @@ backups/
 # 4. Arquivos de sistema
 .DS_Store
 Thumbs.db
+
+!docker-compose.yml
