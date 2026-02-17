@@ -155,18 +155,49 @@ sudo systemctl restart cpufrequtils
 
 ---
 
-## 🌐 Acesso Externo (Playit.gg)
+## 🌐 Acesso Externo (A "Gambiarra" do Playit.gg)
 
-Este servidor usa o **Playit.gg** para criar o túnel sem abrir portas no roteador.
+Como não temos IP Fixo e não abrimos portas no roteador (CGNAT), utilizamos o **Playit.gg** para tunelar o tráfego UDP da internet direto para o Docker.
 
-* Se o servidor não aparecer na lista da Steam, verifique se o agente do playit está rodando no Linux:
-```bash
-ps aux | grep playit
+### 📜 Como Funciona (Arquitetura)
+O agente do Playit roda no Linux (host) e cria uma ponte criptografada com os servidores globais do Playit.
+* **Fluxo:** `Jogador (Internet)` -> `IP Público Playit` -> `Agente Playit (Seu PC)` -> `Docker (Porta 15636/15637)`
 
-```
+### 🛠️ Configuração dos Túneis (No Site Playit.gg)
+Para o Enshrouded funcionar perfeito na lista da Steam, você precisa configurar **dois túneis UDP** no painel do Playit, apontando para as portas locais que definimos no `docker-compose.yml`.
 
+| Tipo do Túnel | Local Address | Local Port | Para que serve? |
+| :--- | :--- | :--- | :--- |
+| **UDP** | `127.0.0.1` | **15636** | **Game Port:** É por onde os dados do jogo (movimento, combate) passam. |
+| **UDP** | `127.0.0.1` | **15637** | **Query Port:** É o que a Steam usa para ver se o servidor está online e mostrar o ping. |
 
-* Confira no painel (https://playit.gg) se o IP/Porta mudou.
+> **Nota:** O Playit vai te dar endereços externos diferentes para cada um (ex: `ip.playit.gg:10001` e `ip.playit.gg:25000`).
+
+### 🎮 Como Conectar (O Pulo do Gato)
+
+A Steam pode ser confusa. Siga esta ordem para adicionar aos Favoritos:
+
+1.  Pegue o endereço gerado para a **Query Port** (a que aponta para 15637).
+2.  Na Steam, vá em `Exibir` -> `Servidores de Jogos` -> Aba `Favoritos`.
+3.  Clique em `+` e adicione esse endereço.
+4.  **Se não aparecer:** Tente adicionar o endereço da **Game Port** (15636). Às vezes a Steam resolve sozinha.
+
+### 🚨 Solução de Problemas do Playit
+Se o IP mudar ou o servidor sumir:
+1.  Verifique se o agente está rodando:
+    ```bash
+    ps aux | grep playit
+    ```
+2.  Confira no site (https://playit.gg/account/agents) se o agente está "Online".
+3.  Se precisou reinstalar o Linux, instale o agente novamente:
+    ```bash
+    # Download e Instalação (Ubuntu/Debian)
+    curl -SSL [https://playit-cloud.github.io/ppa/key.gpg](https://playit-cloud.github.io/ppa/key.gpg) | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/playit.gpg
+    echo "deb [signed-by=/etc/apt/trusted.gpg.d/playit.gpg] [https://playit-cloud.github.io/ppa/data](https://playit-cloud.github.io/ppa/data) ./" | sudo tee /etc/apt/sources.list.d/playit-cloud.list
+    sudo apt update
+    sudo apt install playit
+    ```
+4.  Ao rodar pela primeira vez, ele vai gerar um link de "Claim" para vincular à sua conta antiga.
 
 ---
 
