@@ -1,0 +1,37 @@
+# 1. Ignorar TUDO dentro da pasta server (jogo, binários, steamapps)
+server/*
+
+# 2. Abrir exceção APENAS para a pasta do save (O Pulo do Gato)
+!server/savegame/
+
+# 3. Ignorar logs e backups soltos na raiz (se houver)
+logs/
+backups/
+
+# 4. Arquivos de sistema
+.DS_Store
+Thumbs.db1~# 1. Ignorar TUDO dentro da pasta server (jogo, binários, steamapps)
+server/*
+
+# 2. Abrir exceção APENAS para a pasta do save (O Pulo do Gato)
+!server/savegame/
+
+# 3. Ignorar logs e backups soltos na raiz (se houver)
+logs/
+backups/
+
+# 4. Arquivos de sistema
+.DS_Store
+Thumbs.db1~# 1. Ignorar TUDO dentro da pasta server (jogo, binários, steamapps)
+server/*
+
+# 2. Abrir exceção APENAS para a pasta do save (O Pulo do Gato)
+!server/savegame/
+
+# 3. Ignorar logs e backups soltos na raiz (se houver)
+logs/
+backups/
+
+# 4. Arquivos de sistema
+.DS_Store
+Thumbs.db
